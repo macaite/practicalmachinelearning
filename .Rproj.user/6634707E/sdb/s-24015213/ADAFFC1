@@ -1,0 +1,25 @@
+{
+    "contents" : "",
+    "created" : 1453923498071.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "ADAFFC1",
+    "lastKnownWriteTime" : 1453839616,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "21ztwz5y1k",
+        "caption" : "trainingSet",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=trainingSet&cache_key=21ztwz5y1k",
+        "displayedObservations" : "11776",
+        "environment" : "",
+        "object" : "trainingSet",
+        "totalObservations" : "11776",
+        "variables" : "53"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "type" : "r_dataframe"
+}

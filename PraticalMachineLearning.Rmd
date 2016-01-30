@@ -1,0 +1,138 @@
+---
+title: "Prediction Assignment Writeup"
+author: "macaite"
+date: "26 January 2016"
+---
+
+##Assignment Brief
+
+The goal of your project is to predict the manner in which they did the exercise. This is the "classe" variable in the training set. You may use any of the other variables to predict with. You should create a report describing how you built your model, how you used cross validation, what you think the expected out of sample error is, and why you made the choices you did. You will also use your prediction model to predict 20 different test cases.
+
+###Background
+
+Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement – a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website here: http://groupware.les.inf.puc-rio.br/har (see the section on the Weight Lifting Exercise Dataset).
+
+###Data
+
+The training data for this project are available here:
+
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv
+
+The test data are available here:
+
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv
+
+
+The data for this project come from this source: http://groupware.les.inf.puc-rio.br/har. 
+
+
+##Approach
+
+The data collected is from six young health participants were asked to perform one set of 10 repetitions of the Unilateral Dumbbell Biceps Curl in five different fashions: The manner in which they did the exercise is in the 'classe' variable and the levels are labled as follows.
+
+A) Exactly according to the specification 
+B) Throwing the elbows to the front 
+C) Lifting the dumbbell only halfway
+D) Lowering the dumbbell only halfway 
+E) Throwing the hips to the front 
+
+The training data is divided into two data sets, one for training and the other for cross validation of the models.  Models are created on the training data set then applied to the validation set to test their accuracy.  This is now enough information to select a model to use on the supplied testing data set of 20 test cases.
+
+For this exercise the Tree and Random Forest models are built and the cross validated.
+
+###Setup and getting the assignment data sets
+```{r download, cache = TRUE}
+download.file("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv","data/pml-training.csv")
+download.file("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv","data/pml-testing.csv")
+```
+
+
+```{r initialise}
+library(caret);library(rpart);library(randomForest);library(rattle)
+set.seed(1234)
+training = read.csv("data/pml-training.csv",na.strings = c("NA","#DIV/0!",""))
+test = read.csv("data/pml-testing.csv",na.strings = c("NA","#DIV/0!",""))
+```
+
+NA values are assigned to any fields with bad data to assist with cleansing in future steps.
+
+###Data Cleansing and partioning
+
+```{r cleans, cache = TRUE}
+#remove first 7 columns
+training = training[,-c(1:7)]
+#remove all columns with only NA
+training = training[,colSums(is.na(training))==0]
+#createTrain and Test data sets
+inTrain = createDataPartition(training$classe,p=0.6)[[1]]
+trainingSet = training[inTrain,]
+testingSet = training[-inTrain,]
+```
+
+A visible check on the data shows the the first 7 columns can be removed from the data set.  These are user names and timestamps, which are not predictors in this data set.  
+
+Any column with a NA value is then removed from the data set.
+
+The data is split into different training and testing sets using a 60:40 split on the initial training set.  This allows us to create the models on the training data and then cross validate them on the testing data set.
+
+###Tree Model
+
+The first model used is the Tree Model, which is splitting fields iteratively in to groups by choosing each split as close the variable the with split the set 50:50.
+
+
+```{r Tree, cache = TRUE}
+modrpart = train(classe ~ .,data = trainingSet, method = "rpart" )
+print(modrpart$finalModel)
+fancyRpartPlot(modrpart$finalModel)
+```
+
+
+```{r TreeConfusion, cache=TRUE}
+rpart.results = predict(modrpart,testingSet)
+cm_rp = confusionMatrix(testingSet$classe,rpart.results)
+cm_rp
+```
+```{r rpartResult}
+rpart.accuarcy = cm_rp$overall[1]
+
+```
+
+Tree Model Accuracy on the testing dataset is ```r rpart.accuarcy```  
+
+
+##Random Forest 
+
+The next model is the Random Forest model which is built on the same training set.  To improve performace parallel processing is used from the site below provided by Leonard Greski. 
+
+https://github.com/lgreski/datasciencectacontent/blob/master/markdown/pml-randomForestPerformance.md
+
+```{r RandomForest, cache=TRUE}
+library(parallel)
+library(doParallel)
+cluster = makeCluster(detectCores()-1)
+registerDoParallel(cluster)
+fitControl = trainControl(method = "cv", number = 10, allowParallel = TRUE)
+modrf = train(classe ~ .,data = trainingSet, method = "rf", trControl = fitControl)
+stopCluster(cluster)
+rf.results = predict(modrf,testingSet)
+```
+
+
+
+```{r rfresults}
+cm_rf = confusionMatrix(testingSet$classe,rf.results)
+rf.accuracy = cm_rf$overall[1]
+rf.error = 1 - rf.accuracy
+cm_rf
+```
+
+The Random Forest model create here gives a prediction accurcy of ```r rf.accuracy```
+Its an easy choice to select the Random Forest model and the out of sample error expected is ```r rf.error```
+
+##Results of the prediction from the Random Forest Model
+
+Here are the predictions using the Random Forest Model.
+
+```{r outofsampletest}
+predict(modrf,test)
+```

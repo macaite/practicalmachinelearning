@@ -1,0 +1,25 @@
+{
+    "contents" : "",
+    "created" : 1453923529005.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "292082C0",
+    "lastKnownWriteTime" : 8386654075230314866,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "4kao048fyv",
+        "caption" : "xtraining",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=xtraining&cache_key=4kao048fyv",
+        "displayedObservations" : "19622",
+        "environment" : "",
+        "object" : "xtraining",
+        "totalObservations" : "19622",
+        "variables" : "160"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "type" : "r_dataframe"
+}

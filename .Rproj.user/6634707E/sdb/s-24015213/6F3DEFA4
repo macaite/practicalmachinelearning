@@ -1,0 +1,18 @@
+{
+    "contents" : "download.file(\"https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv\",\"data/pml-training.csv\")\ndownload.file(\"https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv\",\"data/pml-testing.csv\")\n\nrm(list = ls())\nlibrary(caret);library(randomForest);library(rpart)\nset.seed(1234)\n\nxtraining = read.csv(\"data/pml-training.csv\")\n\ntraining = read.csv(\"data/pml-training.csv\",na.strings = c(\"NA\",\"#DIV/0!\",\"\"))\ntest = read.csv(\"data/pml-testing.csv\",na.strings = c(\"NA\",\"#DIV/0!\",\"\"))\n#str(training);summary(training)\n\n#remove data not needed\ntraining = training[,-c(1:7)]\n\n#remove all columns with only NA\ntraining = training[,colSums(is.na(training))==0]\n\n#createTrain and Test data sets\n\ninTrain = createDataPartition(training$classe,p=0.6)[[1]]\ntrainingSet = training[inTrain,]\ntestingSet = training[-inTrain,]\n\nmodrpart = train(classe ~ .,data = trainingSet, method = \"rpart\" )\nmodrf = train(classe ~ .,data = trainingSet, method = \"rf\" )\n\nrpart.results = predict(modrpart,testingSet)\nrf.results = predict(modrf,testingSet)\n\nconfusionMatrix(testingSet$classe,rpart.results)\nconfusionMatrix(testingSet$classe,rf.results)\n\npredict(modrf,test)\n\n#rfcv(trainingSet[,1:ncol(trainingSet)-1],trainingSet$classe,cv.fold = 3)\n#Sys.time()\n#predict(modrf,test)\n#[1] B A B A A E D B A A B C B A E E A B B B\n#Levels: A B C D E\n\nSys.time()\nlibrary(parallel)\nlibrary(doParallel)\ncluster = makeCluster(detectCores()-1)\nregisterDoParallel(cluster)\nfitControl = trainControl(method = \"cv\", number = 10, allowParallel = TRUE)\nmodrf_p = train(classe ~ .,data = trainingSet, method = \"rf\", trControl = fitControl)\nstopCluster(cluster)\nSys.time()\n",
+    "created" : 1453405398090.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1059589607",
+    "id" : "6F3DEFA4",
+    "lastKnownWriteTime" : 1454157581,
+    "path" : "~/Documents/Data Science/coursera/practicalmachinelearning/assignment/assignment.R",
+    "project_path" : "assignment.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "type" : "r_source"
+}

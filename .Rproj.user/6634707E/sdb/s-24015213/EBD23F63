@@ -1,0 +1,17 @@
+{
+    "contents" : "# Practical Machine Learning\n\nSubmission for the Practical Maching Learning Course from cousera \n\nThe two files required for the submission are:\n\nPraticalMachineLearning.Rmd\n[link to the rmd file](https://github.com/macaite/practicalmachinelearning/blob/master/PraticalMachineLearning.Rmd)\n\nPraticalMachineLearning.html\n[Link the generated HTML file](https://github.com/macaite/practicalmachinelearning/blob/master/PraticalMachineLearning.html)\n\n[Link to the published document](http://rpubs.com/macaite/148405)\n\n\n\n",
+    "created" : 1454172297377.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1995705676",
+    "id" : "EBD23F63",
+    "lastKnownWriteTime" : 1454173601,
+    "path" : "~/Documents/Data Science/coursera/practicalmachinelearning/assignment/README.md",
+    "project_path" : "README.md",
+    "properties" : {
+    },
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "type" : "markdown"
+}
